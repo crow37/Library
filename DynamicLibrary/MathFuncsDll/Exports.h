@@ -5,7 +5,6 @@
 #include <thread>
 #include <mutex>
 
-
 using namespace std;
 
 #ifdef EXPORTS_EXPORTS
