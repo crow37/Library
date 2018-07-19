@@ -66,7 +66,7 @@ namespace MathFuncs
 
 		for (int i = 0; i < p_length; ++i)
 		{
-			l_SubMatrix[i] = p_ItemA[i] + p_ItemB[i];
+			l_SubMatrix[i] = p_ItemA[i] - p_ItemB[i];
 		}
 
 		return l_SubMatrix;
@@ -85,7 +85,8 @@ namespace MathFuncs
 		}
 
 		int l_MatrixLength = p_lenRowA * p_lenColB;
-		int l_ThreadCount = CPU::GetEfficientThreadCount(p_lenRowA);
+		int l_ThreadCount = 1;
+		//int l_ThreadCount = CPU::GetEfficientThreadCount(p_lenRowA);
 
 		A* l_MatrixMul = new A[l_MatrixLength];
 		thread* l_ThreadList = new thread[l_ThreadCount];
@@ -117,25 +118,22 @@ namespace MathFuncs
 			return;
 		}
 
-		for (int i = 0; i < 100000; ++i)
+		for (int i = 0; i < 10000000; ++i)
 		{
-			for (int i = 0; i < 10000000; ++i)
+			for (int row = p_StartRowIdx; row < p_lenRowA; row += p_ThreadLen)
 			{
-				for (int row = p_StartRowIdx; row < p_lenRowA; row += p_ThreadLen)
+				for (int col = 0; col < p_lenColB; ++col)
 				{
-					for (int col = 0; col < p_lenColB; ++col)
+					A l_temp = 0;
+					for (int idx = 0; idx < p_lenColA; ++idx)
 					{
-						A l_temp = 0;
-						for (int idx = 0; idx < p_lenColA; ++idx)
-						{
-							l_temp += p_ItemA[(p_lenColA * row) + idx] * p_ItemB[(p_lenColB * idx) + col];
-						}
-
-						p_Result[(p_lenColB * row) + col] = l_temp;
+						l_temp += p_ItemA[(p_lenColA * row) + idx] * p_ItemB[(p_lenColB * idx) + col];
 					}
+
+					p_Result[(p_lenColB * row) + col] = l_temp;
 				}
 			}
-		}				
+		}		
 	}
 #pragma endregion MT_Mul
 
